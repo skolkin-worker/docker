@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+    volumes:
+      - ./app:/var/www/app:delegated
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/custom.d
+    ports:
+      - 9003:9003
+    networks:
+      - workspace
+  nginx:
+    build:
+      context: ./docker/nginx
+    volumes:
+      - ./app:/var/www/app:delegated
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites/:/etc/nginx/sites-available
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+    depends_on:
+      - php-fpm
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - workspace
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - workspace
+  nodejs:
+    build:
+      context: ./docker/nodejs
+    tty: true
+    volumes:
+      - ./app:/var/www/app
+    depends_on:
+      - php-fpm
+    networks:
+      - workspace
+networks:
+  workspace: null

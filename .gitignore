@@ -1,0 +1,7 @@
+# IDE workspace settings
+.vscode
+
+# Application directory
+/app
+
+.env
