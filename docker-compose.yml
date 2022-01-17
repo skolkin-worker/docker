@@ -27,7 +27,7 @@ services:
     networks:
       - workspace
   database:
-    image: mysql:latest
+    image: mysql:8
     environment:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
